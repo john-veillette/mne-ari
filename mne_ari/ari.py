@@ -1,4 +1,4 @@
-from mne.stats.cluster_level import _find_clusters
+from mne.stats.cluster_level import _find_clusters, _setup_adjacency
 import numpy as np
 
 def _compute_hommel_value(p_vals, alpha):
@@ -20,7 +20,7 @@ def _compute_hommel_value(p_vals, alpha):
     hommel_value = np.trunc(n_samples + (alpha - slope * n_samples) / slope)
     return np.minimum(hommel_value, n_samples)
 
-def _true_positive_fraction(p_vals, alpha):
+def _true_positive_fraction(p_vals, hommel_value, alpha):
     '''
     Given a bunch of z-avalues, return the true positive fraction
 
@@ -30,6 +30,8 @@ def _true_positive_fraction(p_vals, alpha):
     ----------
     p_vals : array,
         A set of p-values from which the TPF is computed.
+    hommel_value: int
+        The Hommel value, used in the computations.
     alpha : float
         The desired FDR control.
 
@@ -51,7 +53,7 @@ def all_resolutions_inference(p_vals, threshold = .05, alpha = .05, adjacency):
     Implements all-resolutions inference as in [1].
 
     Parameters:
-        p_vals: (n_observations, n_times, n_vertices) array
+        p_vals: (n_times, n_vertices) array
         threshold: (float or iterable) p-value threshold(s) for
                     inclusion in a cluster.
         alpha: (float) a "true-discovery" should still have p-value < alpha
@@ -70,13 +72,17 @@ def all_resolutions_inference(p_vals, threshold = .05, alpha = .05, adjacency):
     Neuroimage. 2018 Nov 1;181:786-796.
     doi: 10.1016/j.neuroimage.2018.07.060
     '''
+    n_times = p_vals.shape[1]
+    n_elecs = p_vals.shape[2]
+    if adjacency is not None and adjacency is not False:
+        adjacency = _setup_adjacency(adjacency, n_tests, n_times)
+    hom = _compute_hommel_value(p_vals, alpha)
     true_positive_proportions = np.zeros_like(p_vals)
     for thres in threshold:
         clusters, _ = _find_clusters(p_vals, thres, -1, adjacency)
         for clust in clusters:
             # compute the true-positive proportion for this cluster
             clust_ps = p_vals[clust]
-            hom = _compute_hommel_value(clust_ps, alpha)
             tpf = _true_positive_fraction(clust_ps, hom, alpha)
             # update results array if new TPF > old TPF
             tpf_max = true_positive_proportion[clust]
