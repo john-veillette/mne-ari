@@ -54,8 +54,9 @@ def all_resolutions_inference(p_vals, threshold = .05, alpha = .05, adjacency):
         p_vals: (n_observations, n_times, n_vertices) array
         threshold: (float or iterable) p-value threshold(s) for
                     inclusion in a cluster.
-        alpha: (float) a "true-positive" still has a p-value < alpha
-                    after accounting for multiple comparisons.
+        alpha: (float) a "true-discovery" should still have p-value < alpha
+                    after accounting for multiple comparisons. So this is
+                    the false discovry control level.
         adjacency: defines neighbors in the data, as in
                     mne.stats.spatio_temporal_cluster_1samp_test
 
