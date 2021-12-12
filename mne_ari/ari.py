@@ -75,7 +75,7 @@ def all_resolutions_inference(p_vals, threshold = .05, alpha = .05, adjacency):
     n_times = p_vals.shape[1]
     n_elecs = p_vals.shape[2]
     if adjacency is not None and adjacency is not False:
-        adjacency = _setup_adjacency(adjacency, n_tests, n_times)
+        adjacency = _setup_adjacency(adjacency, n_elecs, n_times)
     hom = _compute_hommel_value(p_vals, alpha)
     true_positive_proportions = np.zeros_like(p_vals)
     for thres in threshold:
