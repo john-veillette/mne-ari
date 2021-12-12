@@ -72,12 +72,15 @@ def all_resolutions_inference(p_vals, threshold = .05, alpha = .05, adjacency):
     Neuroimage. 2018 Nov 1;181:786-796.
     doi: 10.1016/j.neuroimage.2018.07.060
     '''
+    p_vals[:, np.newaxis] if p_vals.ndim == 1 else p_vals
+    true_positive_proportions = np.zeros_like(p_vals)
     n_times = p_vals.shape[1]
     n_elecs = p_vals.shape[2]
+    n_tests = n_elecs * n_times
+    p_vals = np.reshape(p_vals, (p_vals.shape[0], -1)) # flatten
     if adjacency is not None and adjacency is not False:
-        adjacency = _setup_adjacency(adjacency, n_elecs, n_times)
+        adjacency = _setup_adjacency(adjacency, n_tests, n_times)
     hom = _compute_hommel_value(p_vals, alpha)
-    true_positive_proportions = np.zeros_like(p_vals)
     for thres in threshold:
         clusters, _ = _find_clusters(p_vals, thres, -1, adjacency)
         for clust in clusters:
