@@ -1,4 +1,9 @@
-from mne.stats.cluster_level import _find_clusters, _setup_adjacency
+from mne.stats.cluster_level import (
+    _find_clusters, 
+    _setup_adjacency,
+    _reshape_clusters,  
+    _cluster_indices_to_mask
+     )
 import numpy as np
 
 def _compute_hommel_value(p_vals, alpha):
@@ -7,6 +12,8 @@ def _compute_hommel_value(p_vals, alpha):
 
     **implementation modified from nilearn.glm.thresholding**
     '''
+    p_vals = p_vals.copy().flatten()
+    p_vals = np.sort(p_vals)
     if alpha < 0 or alpha > 1:
         raise ValueError('alpha should be between 0 and 1')
     n_samples = len(p_vals)
@@ -40,7 +47,8 @@ def _true_positive_fraction(p_vals, hommel_value, alpha):
     proportion_true_discoveries : float
         Estimated true positive fraction in the set of values.
     '''
-    hommel_value = _compute_hommel_value(p_vals, alpha)
+    p_vals = p_vals.copy().flatten()
+    p_vals = np.sort(p_vals)
     n_samples = len(p_vals)
     c = np.ceil((hommel_value * p_vals) / alpha)
     unique_c, counts = np.unique(c, return_counts = True)
@@ -48,48 +56,69 @@ def _true_positive_fraction(p_vals, hommel_value, alpha):
     proportion_true_discoveries = np.maximum(0, criterion.max() / n_samples)
     return proportion_true_discoveries
 
-def all_resolutions_inference(p_vals, threshold = .05, alpha = .05, adjacency):
+def all_resolutions_inference(p_vals, alpha = .05, adjacency = None, thresholds = None):
     '''
     Implements all-resolutions inference as in [1].
 
-    Parameters:
+    Tries a range of cluster thresholds between chosen alpha and the Bonferroni
+    corrected threshold, spaced evenly on a log scale.
+
+    Parameters
+    ----------
         p_vals: (n_times, n_vertices) array
-        threshold: (float or iterable) p-value threshold(s) for
-                    inclusion in a cluster.
-        alpha: (float) a "true-discovery" should still have p-value < alpha
-                    after accounting for multiple comparisons. So this is
-                    the false discovry control level.
+        alpha: (float) the false discovry control level
         adjacency: defines neighbors in the data, as in
                     mne.stats.spatio_temporal_cluster_1samp_test
+        thresholds: (iterable) optional, manually specify cluster 
+                    inclusion thresholds to search over
 
-    Returns:
+    Returns
+    ----------
         true_positive_proportions:  highest true positive proportion
                                     for each coordinate in p_vals
-                                    across all input thresholds.
+                                    across all thresholds.
+        clusters: clusters in which true positive proportion exceeds 1 - alpha
 
     [1] Rosenblatt JD, Finos L, Weeda WD, Solari A, Goeman JJ.
-    All-Resolutions Inference for brain imaging.
-    Neuroimage. 2018 Nov 1;181:786-796.
-    doi: 10.1016/j.neuroimage.2018.07.060
+        All-Resolutions Inference for brain imaging.
+        Neuroimage. 2018 Nov 1;181:786-796.
+        doi: 10.1016/j.neuroimage.2018.07.060
     '''
-    p_vals[:, np.newaxis] if p_vals.ndim == 1 else p_vals
     true_positive_proportions = np.zeros_like(p_vals)
-    n_times = p_vals.shape[1]
-    n_elecs = p_vals.shape[2]
-    n_tests = n_elecs * n_times
-    p_vals = np.reshape(p_vals, (p_vals.shape[0], -1)) # flatten
+    n_times = p_vals.shape[0]
+    n_tests = p_vals.size
+
     if adjacency is not None and adjacency is not False:
         adjacency = _setup_adjacency(adjacency, n_tests, n_times)
     hom = _compute_hommel_value(p_vals, alpha)
-    for thres in threshold:
-        clusters, _ = _find_clusters(p_vals, thres, -1, adjacency)
+    if thresholds is None: # search grid up to Bonferroni corrected alpha
+        thresholds = np.linspace(alpha, alpha / p_vals.size, num = 50)
+    else: # verify user-input thresholds 
+        if not hasattr(thresholds, '__iter__'):
+            thresholds = [thresholds]
+        for thres in thresholds:
+            # make sure cluster thresholds are valid p-values
+            assert(thres >= 0)
+            assert(thres <= 1)
+    for thres in thresholds:
+        clusters, _ = _find_clusters(p_vals.flatten(), thres, -1, adjacency)
+        clusters = _reshape_clusters(clusters, true_positive_proportions.shape)
         for clust in clusters:
             # compute the true-positive proportion for this cluster
             clust_ps = p_vals[clust]
             tpf = _true_positive_fraction(clust_ps, hom, alpha)
             # update results array if new TPF > old TPF
-            tpf_max = true_positive_proportion[clust]
+            tpf_max = true_positive_proportions[clust]
+            tpf = np.full_like(tpf_max, tpf)
             tpfs = np.stack([tpf_max, tpf], axis = 0)
             tpf_max = tpfs.max(axis = 0)
-            true_positive_proportion[clust] = tpf_max
-    return true_positive_proportions
+            true_positive_proportions[clust] = tpf_max
+    # get clusters where true discovery proportion exceeds threshold
+    clusters, _ = _find_clusters(true_positive_proportions.flatten(), 1 - alpha, 1, adjacency)
+    if clusters:
+        # make sure clusters are formatted as boolean masks instead of as indices
+        if np.sum(clusters[0] == 1) + np.sum(clusters[0] == 0) != clusters[0].size:
+            clusters = _cluster_indices_to_mask(clusters, true_positive_proportions.size)
+        # and reshape to match sample shape 
+        clusters = _reshape_clusters(clusters, true_positive_proportions.shape)
+    return true_positive_proportions, clusters
