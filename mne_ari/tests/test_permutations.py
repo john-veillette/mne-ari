@@ -2,7 +2,7 @@ from numpy.testing import assert_allclose
 from ..permutation import permutation_test
 import numpy as np
 
-N_PERM = 1000
+N_PERM = 500
 
 def _test_one_sample(sample_shape, n_obs = 50):
 	'''
@@ -24,9 +24,9 @@ def _test_one_sample(sample_shape, n_obs = 50):
 	assert(p_vals_twosided.shape == tuple(sample_shape))
 
 	# make sure p-values make sense
-	assert_allclose(p_vals_pos, 1 - p_vals_neg, atol = 1e-3) 
+	assert_allclose(p_vals_pos, 1 - p_vals_neg, atol = 1e-2) 
 	p = 2 * np.stack([p_vals_pos, p_vals_neg], axis = 0).min(axis = 0)
-	assert_allclose(p_vals_twosided, p, atol = 1e-3)
+	assert_allclose(p_vals_twosided, p, atol = 1e-2)
 
 def _test_two_sample(sample_shape, n_obs1 = 40, n_obs2 = 60):
 
@@ -44,9 +44,9 @@ def _test_two_sample(sample_shape, n_obs1 = 40, n_obs2 = 60):
 	assert(p_vals_twosided.shape == tuple(sample_shape))
 
 	# make sure p-values make sense
-	assert_allclose(p_vals_pos, 1 - p_vals_neg, atol = 1e-3) 
+	assert_allclose(p_vals_pos, 1 - p_vals_neg, atol = 1e-2) 
 	p = 2 * np.stack([p_vals_pos, p_vals_neg], axis = 0).min(axis = 0)
-	assert_allclose(p_vals_twosided, p, atol = 1e-3)
+	assert_allclose(p_vals_twosided, p, atol = 1e-2)
 
 def test_permutation_test():
 	'''
@@ -54,7 +54,7 @@ def test_permutation_test():
 	'''
 	np.random.seed(0)
 	# one sample test
-	for sample_shape in ([30, 40], [20, 70, 10], [15, 90, 10, 50]):
+	for sample_shape in ([30, 40], [20, 70, 10]):
 		_test_one_sample(sample_shape)
 		_test_two_sample(sample_shape)
 	

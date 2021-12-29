@@ -90,7 +90,9 @@ def all_resolutions_inference(p_vals, alpha = .05, adjacency = None, thresholds 
 
     if adjacency is not None and adjacency is not False:
         adjacency = _setup_adjacency(adjacency, n_tests, n_times)
+
     hom = _compute_hommel_value(p_vals, alpha)
+
     if thresholds is None: # search grid up to Bonferroni corrected alpha
         thresholds = np.linspace(alpha, alpha / p_vals.size, num = 50)
     else: # verify user-input thresholds 
@@ -100,9 +102,15 @@ def all_resolutions_inference(p_vals, alpha = .05, adjacency = None, thresholds 
             # make sure cluster thresholds are valid p-values
             assert(thres >= 0)
             assert(thres <= 1)
+
     for thres in thresholds:
-        clusters, _ = _find_clusters(p_vals.flatten(), thres, -1, adjacency)
-        clusters = _reshape_clusters(clusters, true_positive_proportions.shape)
+        if adjacency is None: # use lattice adjacency 
+            clusters, _ = _find_clusters(p_vals, thres, -1)
+        else:
+            clusters, _ = _find_clusters(p_vals.flatten(), thres, -1, adjacency)
+        if clusters:
+            clusters = _cluster_indices_to_mask(clusters, n_tests)
+            clusters = _reshape_clusters(clusters, true_positive_proportions.shape)
         for clust in clusters:
             # compute the true-positive proportion for this cluster
             clust_ps = p_vals[clust]
@@ -113,12 +121,10 @@ def all_resolutions_inference(p_vals, alpha = .05, adjacency = None, thresholds 
             tpfs = np.stack([tpf_max, tpf], axis = 0)
             tpf_max = tpfs.max(axis = 0)
             true_positive_proportions[clust] = tpf_max
+
     # get clusters where true discovery proportion exceeds threshold
     clusters, _ = _find_clusters(true_positive_proportions.flatten(), 1 - alpha, 1, adjacency)
     if clusters:
-        # make sure clusters are formatted as boolean masks instead of as indices
-        if np.sum(clusters[0] == 1) + np.sum(clusters[0] == 0) != clusters[0].size:
-            clusters = _cluster_indices_to_mask(clusters, true_positive_proportions.size)
-        # and reshape to match sample shape 
+        clusters = _cluster_indices_to_mask(clusters, n_tests)
         clusters = _reshape_clusters(clusters, true_positive_proportions.shape)
     return true_positive_proportions, clusters
