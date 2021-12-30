@@ -94,7 +94,7 @@ def all_resolutions_inference(p_vals, alpha = .05, adjacency = None, thresholds 
     hom = _compute_hommel_value(p_vals, alpha)
 
     if thresholds is None: # search grid up to Bonferroni corrected alpha
-        thresholds = np.linspace(alpha, alpha / p_vals.size, num = 50)
+        thresholds = np.geomspace(alpha, alpha / p_vals.size, num = 100)
     else: # verify user-input thresholds 
         if not hasattr(thresholds, '__iter__'):
             thresholds = [thresholds]

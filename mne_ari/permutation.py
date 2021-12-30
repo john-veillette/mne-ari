@@ -52,9 +52,9 @@ def _permutation_test_ind(X, n_permutations = 10000, tail = 0, seed = None):
     X = np.concatenate(X, axis = 0)
     greater_ct = np.zeros_like(X[0])
     lesser_ct = np.zeros_like(X[0])
-    obs = X[n1:].mean(0) - X[:n1].mean(0)
+    idxs = np.arange(len(X))
+    obs = X[:n1].mean(0) - X[n1:].mean(0)
     for i in range(n_permutations):
-        idxs = np.arange(len(X))
         rng.shuffle(idxs)
         perm_X = X[idxs]
         perm_effect = perm_X[:n1].mean(0) - perm_X[n1:].mean(0)
