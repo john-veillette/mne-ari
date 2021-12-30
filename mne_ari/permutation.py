@@ -39,8 +39,8 @@ def _permutation_test_1samp(X, n_permutations = 10000, tail = 0, seed = None):
     elif tail == -1:
         p = (lesser_ct + 1) / (n_permutations + 1)
     elif tail == 0:
-        p1 = greater_ct / (n_permutations + 1)
-        p2 = lesser_ct / (n_permutations + 1)
+        p1 = (greater_ct + 1) / (n_permutations + 1)
+        p2 = (lesser_ct + 1) / (n_permutations + 1)
         p = 2 * np.stack([p1, p2], 0).min(0)
     else:
         raise ValueError("Cannot compute p-value with meaningless tail = %d."%tail)
@@ -65,8 +65,8 @@ def _permutation_test_ind(X, n_permutations = 10000, tail = 0, seed = None):
     elif tail == -1:
         p = (lesser_ct + 1) / (n_permutations + 1)
     elif tail == 0:
-        p1 = greater_ct / (n_permutations + 1)
-        p2 = lesser_ct / (n_permutations + 1)
+        p1 = (greater_ct + 1) / (n_permutations + 1)
+        p2 = (lesser_ct + 1) / (n_permutations + 1)
         p = 2 * np.stack([p1, p2], 0).min(0)
     else:
         raise ValueError("Cannot compute p-value with meaningless tail = %d."%tail)
