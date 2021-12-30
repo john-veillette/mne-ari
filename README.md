@@ -2,3 +2,13 @@
 # MNE-ARI
 
 [All-resolutions Inference](https://doi.org/10.1016/j.neuroimage.2018.07.060) for M/EEG in Python.
+
+## Installation
+
+You can install the latest source code from Github using:
+
+```
+pip install git+https://github.com/john-veillette/mne_ari.git
+```
+
+I intend to make a release available on PyPi in the near future (so that you can just `pip install mne_ari`), but I haven't gotten to it yet.

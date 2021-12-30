@@ -61,7 +61,7 @@ def all_resolutions_inference(p_vals, alpha = .05, adjacency = None, thresholds 
     Implements all-resolutions inference as in [1].
 
     Tries a range of cluster thresholds between chosen alpha and the Bonferroni
-    corrected threshold, spaced evenly on a log scale.
+    corrected threshold. You can manually specify thresholds to try if you want
 
     Parameters
     ----------

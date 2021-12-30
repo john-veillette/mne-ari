@@ -35,9 +35,9 @@ def _permutation_test_1samp(X, n_permutations = 10000, tail = 0, seed = None):
         greater_ct += _compare(obs, perm_effect, 1)
         lesser_ct += _compare(obs, perm_effect, -1)
     if tail == 1:
-        p = greater_ct / (n_permutations + 1)
+        p = (greater_ct + 1) / (n_permutations + 1)
     elif tail == -1:
-        p = lesser_ct / (n_permutations + 1)
+        p = (lesser_ct + 1) / (n_permutations + 1)
     elif tail == 0:
         p1 = greater_ct / (n_permutations + 1)
         p2 = lesser_ct / (n_permutations + 1)
@@ -57,13 +57,13 @@ def _permutation_test_ind(X, n_permutations = 10000, tail = 0, seed = None):
         idxs = np.arange(len(X))
         rng.shuffle(idxs)
         perm_X = X[idxs]
-        perm_effect = perm_X[n1:].mean(0) - perm_X[:n1].mean(0)
+        perm_effect = perm_X[:n1].mean(0) - perm_X[n1:].mean(0)
         greater_ct += _compare(obs, perm_effect, 1)
         lesser_ct += _compare(obs, perm_effect, -1)
     if tail == 1:
-        p = greater_ct / (n_permutations + 1)
+        p = (greater_ct + 1) / (n_permutations + 1)
     elif tail == -1:
-        p = lesser_ct / (n_permutations + 1)
+        p = (lesser_ct + 1) / (n_permutations + 1)
     elif tail == 0:
         p1 = greater_ct / (n_permutations + 1)
         p2 = lesser_ct / (n_permutations + 1)
