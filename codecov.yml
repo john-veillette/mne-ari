@@ -1,0 +1,17 @@
+coverage:
+  status:
+    project:
+      default:
+        # basic
+        target: 80%
+        threshold: 5%
+        flags: 
+          - unit
+        paths: 
+          - "mne_ari"
+       # advanced settings
+        branches: 
+          - master
+        if_ci_failed: error #success, failure, error, ignore
+        informational: false
+        only_pulls: false
