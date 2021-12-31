@@ -19,6 +19,7 @@ jobs:
       run: |
         pip install -r requirements.txt
         pip install mne[data]
+        pip install nilearn
         pip install pytest
         pip install pytest-cov
         pytest --cov=mne_ari -cov-report=xml
