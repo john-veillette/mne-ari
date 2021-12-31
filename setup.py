@@ -1,4 +1,4 @@
-from setuptools import setup 
+from setuptools import setup, find_packages
 from os.path import realpath, dirname, join
 import sys 
 
@@ -16,7 +16,7 @@ setup(
     author = 'John Veillette',
     author_email = 'johnv@uchicago.edu',
     license = 'BSD-3-Clause',
-    packages = ['mne_ari'],
+    packages = find_packages(),
     install_requires = install_reqs,
     classifiers = [
             'Intended Audience :: Science/Research',
