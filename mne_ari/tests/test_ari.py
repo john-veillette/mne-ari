@@ -8,16 +8,45 @@ import mne
 def _test_ari(sample_shape, adjacency = None):
 	'''
 	check that ARI API is behaving as expected for a given sample shape
-
-	There isn't a good reference implementation in Python to compare results to
-	(other than the nilearn one that our helper functions in ari.py basically
-	copy), so the efficacy of our implementation isn't verified as part of the
-	continuous integration pipeline. Instead, we test the false positive 
-	characteristics manually by simulation.
 	'''
-	p_vals = np.random.random(sample_shape)
-	tdp, clusters = all_resolutions_inference(p_vals, adjacency = adjacency)
-	assert(tdp.shape == p_vals.shape)
+	data1 = np.random.normal(size = [40] + sample_shape)
+	data2 = np.random.normal(size = [60] + sample_shape)
+	p_vals, tdp, clusters = all_resolutions_inference(
+		[data1, data2],
+		 n_permutations = 100, 
+		 adjacency = adjacency
+		 )
+	assert(tdp.shape == tuple(sample_shape))
+	assert(p_vals.shape == tuple(sample_shape))
+	assert (np.sum(tdp <= 1) == tdp.size)
+	assert(np.sum(tdp >= 0) == tdp.size)
+	assert(type(clusters) is list)
+	if len(clusters) > 0:
+		for i in range(len(clusters)):
+			assert(clusters[i].shape == p_vals.shape)
+	# make sure one sample works also 
+	p_vals, tdp, clusters = all_resolutions_inference(
+		data1, 
+		n_permutations = 100, 
+		adjacency = adjacency
+		)
+	assert(tdp.shape == tuple(sample_shape))
+	assert(p_vals.shape == tuple(sample_shape))
+	assert (np.sum(tdp <= 1) == tdp.size)
+	assert(np.sum(tdp >= 0) == tdp.size)
+	assert(type(clusters) is list)
+	if len(clusters) > 0:
+		for i in range(len(clusters)):
+			assert(clusters[i].shape == p_vals.shape)
+	# and permutation version
+	p_vals, tdp, clusters = all_resolutions_inference(
+		data1, 
+		ari_type = 'permutation', 
+		n_permutations = 100, 
+		adjacency = adjacency
+		)
+	assert(tdp.shape == tuple(sample_shape))
+	assert(p_vals.shape == tuple(sample_shape))
 	assert (np.sum(tdp <= 1) == tdp.size)
 	assert(np.sum(tdp >= 0) == tdp.size)
 	assert(type(clusters) is list)
