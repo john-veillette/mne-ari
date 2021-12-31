@@ -73,7 +73,7 @@ def test_ari():
 	# last dimension should be dimension adjacency matrix applies to, 
 	# so must be same length as ch_names.
 	n_chan = len(ch_names)
-	for i in range(3): # ARI should handle an arbitrary number of dimensions
+	for i in range(2): # ARI should handle an arbitrary number of dimensions
 		shape = np.random.randint(10, 50, size = i).tolist() + [n_chan]
 		# test with and without adjacency 
 		_test_ari(shape)
