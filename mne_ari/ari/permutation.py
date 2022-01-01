@@ -46,7 +46,8 @@ class pARI:
         arXiv preprint arXiv:2012.00368 (2020).
     '''
 
-    def __init__(self, X, alpha, tail = 0, n_permutations = 10000, seed = None):
+    def __init__(self, X, alpha, tail = 0, 
+        n_permutations = 10000, seed = None, statfun = None):
         '''
         uses permutation distribution to estimate best critical vector
         '''
@@ -64,11 +65,11 @@ class pARI:
         if type(X) in [list, tuple]:
             self.sample_shape = X[0][0].shape 
             X = [np.reshape(x, (x.shape[0], -1)) for x in X] # flatten samples
-            p = _permutation_ind(X, n_permutations, self.alternative, seed)
+            p = _permutation_ind(X, n_permutations, self.alternative, seed, statfun)
         else:
             self.sample_shape = X[0].shape
             X = np.reshape(X, (X.shape[0], -1)) # flatten samples
-            p = _permutation_1samp(X, n_permutations, self.alternative, seed)
+            p = _permutation_1samp(X, n_permutations, self.alternative, seed, statfun)
 
         self.p = p[:, 0] # just the observed values 
         self.lam = _optimize_lambda(p, self.alpha, self.delta)
@@ -89,6 +90,14 @@ class pARI:
             u[i] = np.sum(p_vec <= self.crit_vec[i]) - i 
         n_discoveries = np.max(u) # a lower bound
         tdp = n_discoveries / m
+        try:
+            assert(tdp >= 0)
+            assert(tdp <= 1)
+        except:
+            raise Exception("Something weird happened," +
+                " and we got a TDP outside of the range [0, 1]." +
+                " Did you use a custom stat function?" +
+                " Are you sure your p-values make sense?")
         return tdp
 
     @property 

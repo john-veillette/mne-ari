@@ -61,7 +61,8 @@ class ARI:
         doi: 10.1016/j.neuroimage.2018.07.060
     '''
 
-    def __init__(self, X, alpha, tail = 0, n_permutations = 10000, seed = None):
+    def __init__(self, X, alpha, tail = 0, 
+        n_permutations = 10000, seed = None, statfun = None):
         '''
         use permutation distribution to estimate best critical vector for later inference
         '''
@@ -78,14 +79,27 @@ class ARI:
         if type(X) in [list, tuple]:
             self.sample_shape = X[0][0].shape 
             X = [np.reshape(x, (x.shape[0], -1)) for x in X] # flatten samples
-            p = _permutation_ind(X, n_permutations, self.alternative, seed)
+            if statfun is None:
+                p = _permutation_ind(X, n_permutations, self.alternative, seed)
+            else:
+                p = statfun(X)
         else:
             self.sample_shape = X[0].shape
             X = np.reshape(X, (X.shape[0], -1)) # flatten samples
-            p = _permutation_1samp(X, n_permutations, self.alternative, seed)
+            if statfun is None:
+                p = _permutation_1samp(X, n_permutations, self.alternative, seed)
+            else:
+                p = statfun(X)
 
-        p_obs = p[:, 0] # observed p-values from t-test
-        self.p = (p_obs[:, np.newaxis] <= p).mean(1) # permutation p-values
+        if statfun is None:
+            p_obs = p[:, 0] # observed p-values from t-test
+            self.p = (p_obs[:, np.newaxis] <= p).mean(1) # permutation p-values
+        else: # ARI can output TDP > 1 if p == 0, neither of which make sense
+            if np.any(p == 0):
+                raise ValueError(">= 1 of your p-values is exactly zero." +
+                    " This isn't valid and will cause ARI to behave poorly." +
+                    " Try changing your stat function.")
+            self.p = p
         self.hommel = _compute_hommel_value(self.p, self.alpha)
 
     def true_discovery_proportion(self, mask):
@@ -98,6 +112,14 @@ class ARI:
         p = self.p # observed p-values 
         p = p[mask] # only p-vals in cluster 
         tdp = _true_positive_fraction(p, self.hommel, self.alpha)
+        try:
+            assert(tdp >= 0)
+            assert(tdp <= 1)
+        except:
+            raise Exception("Something weird happened," +
+                " and we got a TDP outside of the range [0, 1]." +
+                " Did you use a custom stat function?" +
+                " Are you sure you p-values make sense?")
         return tdp
 
     @property 
