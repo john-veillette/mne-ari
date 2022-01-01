@@ -1,4 +1,5 @@
 from ._permutation import _permutation_1samp, _permutation_ind
+from ..permutation import permutation_test
 import numpy as np 
 
 def _compute_hommel_value(p_vals, alpha):
@@ -81,11 +82,11 @@ class ARI:
         use permutation distribution to estimate best critical vector for later inference
         '''
         if tail == 0 or tail == 'two-sided':
-            self.alternative = 'two-sided'
+            self.alternative = 0
         elif tail == 1 or tail == 'greater':
-            self.alternative = 'greater'
+            self.alternative = 1
         elif tail == -1 or tail == 'less':
-            self.alternative = 'less'
+            self.alternative = -1
         else:
             raise ValueError('Invalid input value for tail!')
         self.alpha = alpha
@@ -94,27 +95,41 @@ class ARI:
             self.sample_shape = X[0][0].shape 
             X = [np.reshape(x, (x.shape[0], -1)) for x in X] # flatten samples
             if statfun is None:
-                p = _permutation_ind(X, n_permutations, self.alternative, seed)
+                # we use our own permutation test rather than e.g. scipy's b/c
+                # those are slower and can give incorrect p-vals == 0 exactly
+                # if observed as greater/less than all random shuffles
+                try:
+                    assert(len(X) == 2)
+                except:
+                    raise ValueError("X list must be of length 2 " + 
+                        " for default independent sample statfun")
+                p = permutation_test(
+                    X, 
+                    n_permutations = n_permutations, tail = self.alternative, 
+                    seed = seed
+                    )
             else:
+                statfun_warning()
                 p = statfun(X)
         else:
             self.sample_shape = X[0].shape
             X = np.reshape(X, (X.shape[0], -1)) # flatten samples
             if statfun is None:
-                p = _permutation_1samp(X, n_permutations, self.alternative, seed)
+                p = permutation_test(
+                    X, 
+                    n_permutations = n_permutations, tail = self.alternative, 
+                    seed = seed
+                    )
             else:
                 statfun_warning()
                 p = statfun(X)
 
-        if statfun is None:
-            p_obs = p[:, 0] # observed p-values from t-test
-            self.p = (p_obs[:, np.newaxis] <= p).mean(1) # permutation p-values
-        else: # ARI can output TDP > 1 if p == 0, neither of which make sense
-            if np.any(p == 0):
-                raise ValueError(">= 1 of your p-values is exactly zero." +
+        # ARI can output TDP > 1 if p == 0, neither of which make sense
+        if np.any(p == 0):
+            raise ValueError(">= 1 of your p-values is exactly zero." +
                     " This isn't valid and will cause ARI to behave poorly." +
                     " Try changing your stat function.")
-            self.p = p
+        self.p = p
         self.hommel = _compute_hommel_value(self.p, self.alpha)
 
     def true_discovery_proportion(self, mask):
