@@ -61,7 +61,7 @@ def statfun_warning():
 Parametric ARI assumes that the p-values of individual tests are valid when
 calculating the true positive proprtion. If this isn't likely true (e.g. 
 you're using a parametric test on M/EEG data), you may want to consider using
-permutation-based ARI by specifying ari_type = 'permutation'.
+permutation-based ARI instead.
 '''
     )
 
