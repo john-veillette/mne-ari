@@ -51,6 +51,20 @@ def _true_positive_fraction(p_vals, hommel_value, alpha):
     proportion_true_discoveries = np.maximum(0, criterion.max() / n_samples)
     return proportion_true_discoveries
 
+def statfun_warning():
+    '''
+    raised when user inputs a custom statistics function
+    '''
+    import warnings
+    warnings.warn(
+'''
+Parametric ARI assumes that the p-values of individual tests are valid when
+calculating the true positive proprtion. If this isn't likely true (e.g. 
+you're using a parametric test on M/EEG data), you may want to consider using
+permutation-based ARI by specifying ari_type = 'permutation'.
+'''
+    )
+
 class ARI:
     '''
     A class that handles parametric All-Resolutions Inference as in [1].
@@ -89,6 +103,7 @@ class ARI:
             if statfun is None:
                 p = _permutation_1samp(X, n_permutations, self.alternative, seed)
             else:
+                statfun_warning()
                 p = statfun(X)
 
         if statfun is None:
