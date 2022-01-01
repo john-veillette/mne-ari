@@ -40,10 +40,13 @@ def all_resolutions_inference(X, alpha = .05, tail = 0, ari_type = 'parametric',
 
     Returns
     ----------
-        true_positive_proportions:  highest true positive proportion
+        p_vals: (sample_shape array) the p-values from the mass univariate test
+        true_positive_proportions:  (sample_shape array)
+                                    highest true positive proportion
                                     for each coordinate in p_vals
                                     across all thresholds.
-        clusters: clusters in which true positive proportion exceeds 1 - alpha
+        clusters: list of sample_shape boolean masks or empty list
+                clusters in which true positive proportion exceeds 1 - alpha
 
     References
     ----------
