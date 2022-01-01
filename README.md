@@ -25,9 +25,18 @@ I intend to make a release available on PyPi in the near future (so that you can
 
 ## Usage 
 
-Check out the [examples notebook](https://github.com/john-veillette/mne_ari/blob/main/notebooks/examples.ipynb) for basic usage.
+Basic usage is as follows:
 
-The API also supports custom stat functions. This isn't currently featured in the example notebook, but it is described in the [docstring](https://github.com/john-veillette/mne_ari/blob/6a9e2ffe53623604e2c21d0e00b5054084e7da00/mne_ari/ari/ari.py#L13) for `mne_ari.all_resolutions_inference`.
+```
+from mne_ari import all_resolutions_inference
+p_vals, tdp, clusters = all_resolutions_inference(data, alpha = 0.05)
+```
+
+You can use the argument `ari_type = 'permutation'` or `'parametric'` to specify the type of ARI to use. `'permutation'` is the default, since it has better unit test coverage. 
+
+Check out the [examples notebook](https://github.com/john-veillette/mne_ari/blob/main/notebooks/examples.ipynb) for more advanced usage examples such as clustering, different data types/dimensions, and custom statistics functions.
+
+Also read the [docstring](https://github.com/john-veillette/mne_ari/blob/6a9e2ffe53623604e2c21d0e00b5054084e7da00/mne_ari/ari/ari.py#L13) for `mne_ari.all_resolutions_inference`.
 
 If you know what you're doing, feel free to use the lower-level APIs for parametric (`mne_ari.ari.parametric.ARI`) and permutation (`mne_ari.ari.permutation.pARI`) ARI, which implement multiple comparisons control without any of the cluster-identification stuff. (These classes are not really "low-level"; they're easy to use, just poorly documented. But they'll let you select subsets/clusters however you want or use ARI on arbitrary data, which is potentially handy.)
 
