@@ -1,9 +1,16 @@
 from mne.datasets.sample import data_path
 from mne.channels import find_ch_adjacency
 from ..ari import all_resolutions_inference
+from scipy.stats import ttest_1samp
 import numpy as np
 from os.path import join  
 import mne
+
+N_PERMS = 50
+
+def custom_statfun_example_1samp(X):
+	_, p_obs = ttest_1samp(X, 0, axis = 0)
+	return p_obs
 
 def _test_ari(sample_shape, adjacency = None):
 	'''
@@ -13,7 +20,7 @@ def _test_ari(sample_shape, adjacency = None):
 	data2 = np.random.normal(size = [60] + sample_shape)
 	p_vals, tdp, clusters = all_resolutions_inference(
 		[data1, data2],
-		 n_permutations = 100, 
+		 n_permutations = N_PERMS, 
 		 adjacency = adjacency
 		 )
 	assert(tdp.shape == tuple(sample_shape))
@@ -27,7 +34,7 @@ def _test_ari(sample_shape, adjacency = None):
 	# make sure one sample works also 
 	p_vals, tdp, clusters = all_resolutions_inference(
 		data1, 
-		n_permutations = 100, 
+		n_permutations = N_PERMS, 
 		adjacency = adjacency
 		)
 	assert(tdp.shape == tuple(sample_shape))
@@ -42,7 +49,7 @@ def _test_ari(sample_shape, adjacency = None):
 	p_vals, tdp, clusters = all_resolutions_inference(
 		data1, 
 		ari_type = 'permutation', 
-		n_permutations = 100, 
+		n_permutations = N_PERMS, 
 		adjacency = adjacency
 		)
 	assert(tdp.shape == tuple(sample_shape))
@@ -53,6 +60,37 @@ def _test_ari(sample_shape, adjacency = None):
 	if len(clusters) > 0:
 		for i in range(len(clusters)):
 			assert(clusters[i].shape == p_vals.shape)
+	# and custom statfun
+	p_vals, tdp, clusters = all_resolutions_inference(
+		data1, 
+		ari_type = 'parametric', 
+		adjacency = adjacency,
+		statfun = custom_statfun_example_1samp
+		)
+	assert(tdp.shape == tuple(sample_shape))
+	assert(p_vals.shape == tuple(sample_shape))
+	assert (np.sum(tdp <= 1) == tdp.size)
+	assert(np.sum(tdp >= 0) == tdp.size)
+	assert(type(clusters) is list)
+	if len(clusters) > 0:
+		for i in range(len(clusters)):
+			assert(clusters[i].shape == p_vals.shape)
+	p_vals, tdp, clusters = all_resolutions_inference(
+		data1, 
+		ari_type = 'permutation', 
+		adjacency = adjacency,
+		n_permutations = N_PERMS,
+		statfun = custom_statfun_example_1samp
+		)
+	assert(tdp.shape == tuple(sample_shape))
+	assert(p_vals.shape == tuple(sample_shape))
+	assert (np.sum(tdp <= 1) == tdp.size)
+	assert(np.sum(tdp >= 0) == tdp.size)
+	assert(type(clusters) is list)
+	if len(clusters) > 0:
+		for i in range(len(clusters)):
+			assert(clusters[i].shape == p_vals.shape)
+
 
 def test_ari():
 
