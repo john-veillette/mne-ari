@@ -1,4 +1,4 @@
-[![Unit Tests](https://github.com/john-veillette/mne_ari/actions/workflows/pytest.yml/badge.svg)](https://github.com/john-veillette/mne_ari/actions/workflows/pytest.yml) [![codecov](https://codecov.io/gh/john-veillette/mne_ari/branch/main/graph/badge.svg?token=SRRFR8JZGI)](https://codecov.io/gh/john-veillette/mne_ari)
+[![Unit Tests](https://github.com/john-veillette/mne_ari/actions/workflows/pytest.yml/badge.svg)](https://github.com/john-veillette/mne_ari/actions/workflows/pytest.yml) [![codecov](https://codecov.io/gh/john-veillette/mne_ari/branch/main/graph/badge.svg?token=SRRFR8JZGI)](https://codecov.io/gh/john-veillette/mne_ari) [![DOI](https://zenodo.org/badge/437409313.svg)](https://zenodo.org/badge/latestdoi/437409313)
 # MNE-ARI: [All-resolutions Inference](https://doi.org/10.1016/j.neuroimage.2018.07.060) for M/EEG in Python.
 
 ## Background 
@@ -57,7 +57,7 @@ And for the permutation-based version:
 
 Andreella, A., Hemerik, J., Weeda, W., Finos, L., & Goeman, J. (2020). Permutation-based true discovery proportions for fMRI cluster analysis. arXiv preprint arXiv:2012.00368.
 
-And if you're using this package, please cite this code as well! There will be a DOI issued for each release, which will be displayed on a badge at the top of this README.
+And if you're using this package, please cite this code as well! There will be a DOI issued for each release, which will be displayed on a badge at the top of this README, so make sure you're using the DOI that matches the version you use. An example citation is:
 
-
+Veillette, J. P. MNE-ARI: All-Resolutions Inference For M/EEG in Python. [doi:10.5281/zenodo.5813808](https://doi.org/10.5281/zenodo.5813808)
 
