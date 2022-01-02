@@ -1,23 +1,16 @@
 from setuptools import setup, find_packages
-from os.path import realpath, dirname, join
 import sys 
-
-PROJECT_ROOT = dirname(realpath(__file__))
-REQUIREMENTS_FILE = join(PROJECT_ROOT, 'requirements.txt')
-
-with open(REQUIREMENTS_FILE) as f:
-    install_reqs = f.read().splitlines()
 
 setup(
     name = 'mne_ari',
-    version = '0.1.0',
+    version = '0.1.1',
     description = 'All-Resolutions Inference for M/EEG',
     url = 'https://github.com/john-veillette/mne_ari',
     author = 'John Veillette',
     author_email = 'johnv@uchicago.edu',
     license = 'BSD-3-Clause',
     packages = find_packages(),
-    install_requires = install_reqs,
+    install_requires = ['mne>=0.20', 'numpy>=1.15.4', 'scipy>=1.1.0'],
     classifiers = [
             'Intended Audience :: Science/Research',
             'Intended Audience :: Developers',
