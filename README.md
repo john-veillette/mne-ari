@@ -15,13 +15,17 @@ This package implements both [parametric](https://doi.org/10.1016/j.neuroimage.2
 
 ## Installation
 
-You can install the latest version from Github to your Python environment using:
+You can install a stable version using:
+
+```
+pip install mne_ari
+```
+
+Or you can install the latest version from Github using:
 
 ```
 pip install git+https://github.com/john-veillette/mne_ari.git
 ```
-
-I intend to make a release available on PyPi in the near future (so that you can just `pip install mne_ari`), but I haven't gotten to it yet.
 
 ## Usage 
 
@@ -59,5 +63,5 @@ Andreella, A., Hemerik, J., Weeda, W., Finos, L., & Goeman, J. (2020). Permutati
 
 And if you're using this package, please cite this code as well! There will be a DOI issued for each release, which will be displayed on a badge at the top of this README, so make sure you're using the DOI that matches the version you use. An example citation is:
 
-Veillette, J. P. (2022) MNE-ARI: All-Resolutions Inference For M/EEG in Python. [doi:10.5281/zenodo.5813808](https://doi.org/10.5281/zenodo.5813808)
+Veillette, J. P. (2022). MNE-ARI: All-Resolutions Inference For M/EEG in Python. [doi:10.5281/zenodo.5813808](https://doi.org/10.5281/zenodo.5813808)
 
