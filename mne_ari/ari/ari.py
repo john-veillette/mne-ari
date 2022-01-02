@@ -12,7 +12,7 @@ from .permutation import pARI
 
 def all_resolutions_inference(X, alpha = .05, tail = 0, ari_type = 'parametric',
     adjacency = None, n_permutations = 10000, thresholds = None, 
-    seed = None, statfun = None):
+    seed = None, statfun = None, shift = 0):
     '''
     Implements all-resolutions inference as in [1] or [2].
 
@@ -33,6 +33,14 @@ def all_resolutions_inference(X, alpha = .05, tail = 0, ari_type = 'parametric',
         n_permutations: (int) number of permutations to perform
         thresholds: (iterable) optional, manually specify cluster 
                     inclusion thresholds to search over
+        shift: (float) shift for candidate critical vector family. 
+                Corresponds to delta parameter in [2].
+                If statfun p-values are anti-conservative, increasing this can
+                increase power for detecting larger clusters (at the cost of 
+                decreased power for smaller clusters). Therefore, this
+                corresponds to the minimum size cluster we're interested in 
+                detecting. Default is 0 (interested in any sized cluster).
+                Only for permutation-based ARI, ignored otherwise.
         statfun: a custom statistics function to compute p-values. Should take
                 an (n_observations, n_tests) array (or list of such arrays) 
                 as input and return an (n_tests,) array of p-values. If this
@@ -63,7 +71,7 @@ def all_resolutions_inference(X, alpha = .05, tail = 0, ari_type = 'parametric',
     if ari_type == 'parametric':
         ari = ARI(X, alpha, tail, n_permutations, seed, statfun)
     elif ari_type == 'permutation':
-        ari = pARI(X, alpha, tail, n_permutations, seed, statfun)
+        ari = pARI(X, alpha, tail, n_permutations, seed, statfun, shift)
     else:
         raise ValueError("type must be 'parametric' or 'permutation'.")
     p_vals = ari.p_values

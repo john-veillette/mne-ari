@@ -47,7 +47,7 @@ class pARI:
     '''
 
     def __init__(self, X, alpha, tail = 0, 
-        n_permutations = 10000, seed = None, statfun = None):
+        n_permutations = 10000, seed = None, statfun = None, shift = 0):
         '''
         uses permutation distribution to estimate best critical vector
         '''
@@ -60,7 +60,8 @@ class pARI:
         else:
             raise ValueError('Invalid input value for tail!')
         self.alpha = alpha
-        self.delta = 0 # same default as pARIBrain, see [1] 
+        assert(shift >= 0)
+        self.delta = shift # same default as pARIBrain, see [1] 
 
         if type(X) in [list, tuple]:
             self.sample_shape = X[0][0].shape 
