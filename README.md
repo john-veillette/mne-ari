@@ -59,5 +59,5 @@ Andreella, A., Hemerik, J., Weeda, W., Finos, L., & Goeman, J. (2020). Permutati
 
 And if you're using this package, please cite this code as well! There will be a DOI issued for each release, which will be displayed on a badge at the top of this README, so make sure you're using the DOI that matches the version you use. An example citation is:
 
-Veillette, J. P. MNE-ARI: All-Resolutions Inference For M/EEG in Python. [doi:10.5281/zenodo.5813808](https://doi.org/10.5281/zenodo.5813808)
+Veillette, J. P. (2022) MNE-ARI: All-Resolutions Inference For M/EEG in Python. [doi:10.5281/zenodo.5813808](https://doi.org/10.5281/zenodo.5813808)
 
