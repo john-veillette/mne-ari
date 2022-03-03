@@ -18,6 +18,7 @@ jobs:
     - name: Generate coverage report
       run: |
         pip install -U https://github.com/mne-tools/mne-python/archive/main.zip
+        pip install pymatreader
         pip install mne[data]
         pip install nilearn
         pip install pytest
