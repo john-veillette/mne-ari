@@ -1,6 +1,6 @@
 from ._permutation import _permutation_1samp, _permutation_ind
 from ..permutation import permutation_test
-import numpy as np 
+import numpy as np
 
 def _compute_hommel_value(p_vals, alpha):
     '''
@@ -18,10 +18,12 @@ def _compute_hommel_value(p_vals, alpha):
         return p_vals[0] > alpha
     if p_vals[0] > alpha:
         return n_samples
-    slopes = (alpha - p_vals[: - 1]) / np.arange(n_samples, 1, -1)
+    if p_vals[-1] < alpha:
+        return 0
+    slopes = (alpha - p_vals[: - 1]) / np.arange(n_samples - 1, 0, -1)
     slope = np.max(slopes)
-    hommel_value = np.trunc(n_samples + (alpha - slope * n_samples) / slope)
-    return np.minimum(hommel_value, n_samples)
+    hommel_value = np.trunc(alpha / slope)
+    return int(np.minimum(hommel_value, n_samples))
 
 def _true_positive_fraction(p_vals, hommel_value, alpha):
     '''
@@ -60,7 +62,7 @@ def statfun_warning():
     warnings.warn(
 '''
 Parametric ARI assumes that the p-values of individual tests are valid when
-calculating the true positive proprtion. If this isn't likely true (e.g. 
+calculating the true positive proprtion. If this isn't likely true (e.g.
 you're using a parametric test on M/EEG data), you may want to consider using
 permutation-based ARI instead.
 '''
@@ -76,7 +78,7 @@ class ARI:
         doi: 10.1016/j.neuroimage.2018.07.060
     '''
 
-    def __init__(self, X, alpha, tail = 0, 
+    def __init__(self, X, alpha, tail = 0,
         n_permutations = 10000, seed = None, statfun = None):
         '''
         use permutation distribution to estimate best critical vector for later inference
@@ -92,7 +94,7 @@ class ARI:
         self.alpha = alpha
 
         if type(X) in [list, tuple]:
-            self.sample_shape = X[0][0].shape 
+            self.sample_shape = X[0][0].shape
             X = [np.reshape(x, (x.shape[0], -1)) for x in X] # flatten samples
             if statfun is None:
                 # we use our own permutation test rather than e.g. scipy's b/c
@@ -101,11 +103,11 @@ class ARI:
                 try:
                     assert(len(X) == 2)
                 except:
-                    raise ValueError("X list must be of length 2 " + 
+                    raise ValueError("X list must be of length 2 " +
                         " for default independent sample statfun")
                 p = permutation_test(
-                    X, 
-                    n_permutations = n_permutations, tail = self.alternative, 
+                    X,
+                    n_permutations = n_permutations, tail = self.alternative,
                     seed = seed
                     )
             else:
@@ -116,8 +118,8 @@ class ARI:
             X = np.reshape(X, (X.shape[0], -1)) # flatten samples
             if statfun is None:
                 p = permutation_test(
-                    X, 
-                    n_permutations = n_permutations, tail = self.alternative, 
+                    X,
+                    n_permutations = n_permutations, tail = self.alternative,
                     seed = seed
                     )
             else:
@@ -135,12 +137,12 @@ class ARI:
     def true_discovery_proportion(self, mask):
         '''
         given a boolean mask of sample_shape, gives the true discovery proportion
-        for the specified cluster 
+        for the specified cluster
         '''
         assert(mask.shape == self.sample_shape)
         mask = mask.flatten()
-        p = self.p # observed p-values 
-        p = p[mask] # only p-vals in cluster 
+        p = self.p # observed p-values
+        p = p[mask] # only p-vals in cluster
         tdp = _true_positive_fraction(p, self.hommel, self.alpha)
         try:
             assert(tdp >= 0)
@@ -152,6 +154,6 @@ class ARI:
                 " Are you sure you p-values make sense?")
         return tdp
 
-    @property 
+    @property
     def p_values(self):
         return np.reshape(self.p, self.sample_shape)
