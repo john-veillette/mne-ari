@@ -2,10 +2,10 @@ from setuptools import setup, find_packages
 import sys 
 
 setup(
-    name = 'mne_ari',
+    name = 'mne-ari',
     version = '0.1.2',
     description = 'All-Resolutions Inference for M/EEG',
-    url = 'https://github.com/john-veillette/mne_ari',
+    url = 'https://github.com/john-veillette/mne-ari',
     author = 'John Veillette',
     author_email = 'johnv@uchicago.edu',
     license = 'BSD-3-Clause',
