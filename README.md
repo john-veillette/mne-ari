@@ -18,13 +18,13 @@ This package implements both [parametric](https://doi.org/10.1016/j.neuroimage.2
 You can install a stable version using:
 
 ```
-pip install mne_ari
+pip install mne-ari
 ```
 
 Or you can install the latest version from Github using:
 
 ```
-pip install git+https://github.com/john-veillette/mne_ari.git
+pip install git+https://github.com/john-veillette/mne-ari.git
 ```
 Another option is to install using conda:
 ```
