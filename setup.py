@@ -3,7 +3,7 @@ import sys
 
 setup(
     name = 'mne_ari',
-    version = '0.1.1',
+    version = '0.1.2',
     description = 'All-Resolutions Inference for M/EEG',
     url = 'https://github.com/john-veillette/mne_ari',
     author = 'John Veillette',
