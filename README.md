@@ -63,13 +63,13 @@ I hope to get to these improvements myself eventually, but I'm also open to cont
 
 If you use ARI, please cite:
 
-Rosenblatt, J. D., Finos, L., Weeda, W. D., Solari, A., & Goeman, J. J. (2018). All-resolutions inference for brain imaging. Neuroimage, 181, 786-796.
+> Rosenblatt, J. D., Finos, L., Weeda, W. D., Solari, A., & Goeman, J. J. (2018). All-resolutions inference for brain imaging. Neuroimage, 181, 786-796.
 
 And for the permutation-based version:
 
-Andreella, A., Hemerik, J., Weeda, W., Finos, L., & Goeman, J. (2020). Permutation-based true discovery proportions for fMRI cluster analysis. arXiv preprint arXiv:2012.00368.
+> Andreella, A., Hemerik, J., Weeda, W., Finos, L., & Goeman, J. (2020). Permutation-based true discovery proportions for fMRI cluster analysis. arXiv preprint arXiv:2012.00368.
 
 And if you're using this package, please cite this code as well! There will be a DOI issued for each release, which will be displayed on a badge at the top of this README, so make sure you're using the DOI that matches the version you use. An example citation is:
 
-Veillette, J. P. (2022). MNE-ARI: All-Resolutions Inference For M/EEG in Python. [doi:10.5281/zenodo.5813808](https://doi.org/10.5281/zenodo.5813808)
+> Veillette, J. P. (2022). MNE-ARI: All-Resolutions Inference For M/EEG in Python. [doi:10.5281/zenodo.5813808](https://doi.org/10.5281/zenodo.5813808)
 
