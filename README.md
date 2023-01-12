@@ -49,7 +49,7 @@ Also read the [docstring](https://github.com/john-veillette/mne_ari/blob/6a9e2ff
 
 If you know what you're doing, feel free to use the lower-level APIs for parametric (`mne_ari.ari.parametric.ARI`) and permutation (`mne_ari.ari.permutation.pARI`) ARI, which implement multiple comparisons control without any of the cluster-identification stuff. (These classes are not really "low-level"; they're easy to use, just poorly documented. But they'll let you select subsets/clusters however you want or use ARI on arbitrary data, which is potentially handy.)
 
-You can also check out this video recording ([direct download](https://urldefense.com/v3/__https://megcore.nih.gov/MEG/Veillette_MNE-ARI_ClubMEG_10142022.mp4__;!!BpyFHLRN4TMTrA!5vQc3dFgUxCr_XxM9iI3A1B2UHWI136tNUw2q18GQIv-pXbyO9j3vJt5n7MTpAJPJ5XQPaEPH1Ir0NWSLOED0Ts$)) of a live tutorial given to the users of the [National Institute of Health's MEG Core Facility](https://megcore.nih.gov/index.php/Club_MEG#Previous_Tutorials_and_Training).
+You can also check out this video recording ([direct link](https://urldefense.com/v3/__https://megcore.nih.gov/MEG/Veillette_MNE-ARI_ClubMEG_10142022.mp4__;!!BpyFHLRN4TMTrA!5vQc3dFgUxCr_XxM9iI3A1B2UHWI136tNUw2q18GQIv-pXbyO9j3vJt5n7MTpAJPJ5XQPaEPH1Ir0NWSLOED0Ts$)) of a live tutorial given to the users of the National Institute of Health's MEG Core Facility. Check out MNE-ARI's tutorial and some of the other tutorials given to their journal club [here](https://megcore.nih.gov/index.php/Club_MEG#Previous_Tutorials_and_Training)!
 
 ## Future
 
